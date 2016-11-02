@@ -1,0 +1,2 @@
+A B C D E F G H Kolya Vasya
+A B 5 D Kolya 1 G Kolya 5 Kolya Vasya 12 F B 7

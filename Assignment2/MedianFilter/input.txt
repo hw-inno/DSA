@@ -1,0 +1,23 @@
+/*for(i = window/2; i < N - window/2; i++ ){
+            for(j = 0; j < window; j++){
+                sub[j] = signal[i+j];
+            }
+            insertionSort(sub);
+            result[i] = sub[window/2];
+        }
+
+        for(i = 0; i <window/2; i++){
+            for(j = 0; j < window; j++){
+                sub[j] = signal[i+j];
+            }
+            insertionSort(sub);
+            result[i] = sub[window/2];
+        }
+
+        for(i = N - window/2; i < N; i++){
+            for(j = 0; j < window; j++){
+                sub[j] = signal[i+j];
+            }
+            insertionSort(sub);
+            result[i] = sub[window/2];
+        }*/
