@@ -1,11 +1,18 @@
+import com.sun.javafx.geom.IllegalPathStateException;
+
+import java.io.*;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+/* --- Simple graph without self-loops */
+
 
 public class Graph<V>{
     private V[] vertices;
     private HashMap<V, Integer> addr;
     private int[][] matrix;
     private int size;
-    private int E; // how many edges
+    private int numOfEdges; // how many edges
 
     /*----------------------- Constructors -----------------------*/
     public Graph(V[] vertices){
@@ -31,10 +38,26 @@ public class Graph<V>{
 
 
 
+    /* ----------------------- Interface ---------------------- */
     public int numberOfVertices(){ return size; }
-    public int numberOfEdges(){ return E; }
+    public int numberOfEdges(){ return numOfEdges; }
     public boolean isContains(V a){
         return find(a) != -1;
+    }
+    public boolean areAdjacent(V from, V to){
+        int i,j;
+        i = addr.get(from);
+        j = addr.get(to);
+        return matrix[i][j] != 0;
+    }
+    public List<V> neighbours(V node){
+        List<V> list = new LinkedList<>();
+        for (int i = 0; i < size; i++) {
+            if(areAdjacent(node, vertices[i])){
+                list.add(vertices[i]);
+            }
+        }
+        return list;
     }
 
     public void addEdge(V from, V to, int w){
@@ -43,8 +66,8 @@ public class Graph<V>{
         j = addr.get(to);
 
         matrix[i][j] = w;
-        matrix[j][i] = w;
-        E++;
+        //matrix[j][i] = w;
+        numOfEdges++;
     }
     public void addEdge(V from, V to, String ws){
         addEdge(from, to, Integer.parseInt(ws));
@@ -54,8 +77,18 @@ public class Graph<V>{
         i = addr.get(from);
         j = addr.get(to);
 
-        matrix[i][j] = -1;
-        matrix[j][i] = -1;
+        matrix[i][j] = 0;
+        //matrix[j][i] = 0;
+        numOfEdges--;
+    }
+    public int getEdge(V from, V to){
+        int i, j;
+        i = addr.get(from);
+        j = addr.get(to);
+        if(matrix[i][j] != 0)
+            return matrix[i][j];
+        else
+            throw new IllegalPathStateException();
     }
 
     public void printVertices(){
@@ -72,7 +105,10 @@ public class Graph<V>{
             sb.append(vertices[i] + " : ");
             for(int j = 0; j < size; j++){
                 if(matrix[i][j] != 0){
-                    sb.append(vertices[j] + " ");
+                    sb.append(vertices[j] + "");
+                    int road = getEdge(vertices[i], vertices[j]);
+                    if( road > 0)
+                        sb.append("(" +  road + ") ");
                 }
             }
             sb.append("\n");
@@ -80,18 +116,55 @@ public class Graph<V>{
 
         return sb.toString();
     }
-
-
-    /*public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append(V + " " + E + "\n");
-        for (int v = 0; v < V; v++) {
-            s.append(v + ": ");
-            for (int w : adj(v)) {
-                s.append(w + " ");
+    public void save(){
+        BufferedWriter bw = null;
+        try {
+            File output = new File("output.txt");
+            bw = new BufferedWriter(new FileWriter((output.getAbsoluteFile())));
+            bw.write(this.toString());
+            bw.close();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            try {
+                if (bw != null)
+                    bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            s.append("\n");
         }
-        return s.toString();
-    }*/
+    }
+    /* ------------------ End of Interface ------------------ */
+
+
+    public static Graph<String> loadGraph(String fileName){
+        Graph<String> g = null;
+        BufferedReader br = null;
+        List<String> list = new LinkedList<>();
+        try {
+            File file = new File(fileName);
+            br = new BufferedReader(new FileReader(file));
+            String[] vertices = br.readLine().split(" ");
+            g = new Graph<>(vertices);
+
+            String[] edges = br.readLine().split(" ");
+            for (int i = 0; i < edges.length; i+= 3) {
+                g.addEdge(edges[i], edges[i+1], edges[i+2]);
+            }
+
+        }
+        catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        finally {
+            try {
+                if (br != null)
+                    br.close();
+                return g;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return g;
+    }
 }
