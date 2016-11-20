@@ -1,6 +1,10 @@
-import java.util.*;
-import java.io.*;
-import java.util.function.BiPredicate;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -31,16 +35,25 @@ public class Graph<VertexType, EdgeWeight> {
         }       
     }
 
-    public void setEdge(VertexType from, VertexType to, EdgeWeight weight) {
+    public EdgeWeight setEdge(VertexType from, VertexType to, EdgeWeight weight) {
+        EdgeWeight ew = getEdge(from, to);
         adj[addr.get(from)][addr.get(to)] = weight;
+        return ew;
     }
-    
+
+    public void setEdgeBoth(VertexType from, VertexType to, EdgeWeight weight) {
+        setEdge(from, to, weight);
+        setEdge(to, from, weight);
+    }
+  
     public EdgeWeight getEdge(VertexType from, VertexType to) {
         return adj[addr.get(from)][addr.get(to)];
     }
     
-    public void removeEdge(VertexType from, VertexType to) {
+    public EdgeWeight removeEdge(VertexType from, VertexType to) {
+        EdgeWeight ew = getEdge(from, to);
         setEdge(from, to, null);
+        return ew;
     }
     
     public boolean areAdjacent(VertexType from, VertexType to) {
@@ -116,50 +129,7 @@ public class Graph<VertexType, EdgeWeight> {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        
-    }
-
-    public static Graph<String, Integer> chessGraph(BiPredicate<String, String> p) {
-        String[] cells = new String[64];
-        int i = 0;
-        for (char a = 'A'; a <= 'H'; a++) {
-            for (byte b = 1; b <= 8; b++) {
-                cells[i++] = "" + a + b;
-            }
-        }
-        Graph<String, Integer> g = new Graph<>(cells);
-        for (String cell1 : cells)     
-            for (String cell2 : cells) {
-                if (p.test(cell1, cell2))
-                g.setEdge(cell1, cell2, 1);
-            }
-        return g;
-    }
-
-    public void dfs(VertexType v){
-        boolean visited[] = new boolean[size];
-
-        _dfs(v, visited);
-        System.out.println();
-
-        boolean flag = true;
-        for (boolean b: visited) {
-            if(b == false)
-                flag = false;
-        }
-        System.out.println("isConnected : " + flag);
-    }
-    private void _dfs(VertexType v, boolean[] visited){
-        visited[addr.get(v)] = true;
-        System.out.println(v + " ");
-
-        for(VertexType m : neighbours(v)){
-            if(m.equals("D5"))
-                return;
-            if(!visited[addr.get(m)])
-                _dfs(m, visited);
-        }
+        }    
     }
 }
 
