@@ -1,5 +1,4 @@
-/*--- Simple Priority Queue implementation using array-based max heap ---*/
-/* To make it min heap, change '>=' to '<=', '>' to '<' in downheap and upheap */
+/*--- Simple Priority Queue implementation using array-based min heap ---*/
 import java.util.ArrayList;
 
 public class PQ<K extends Comparable<K>,V>{
@@ -18,7 +17,7 @@ public class PQ<K extends Comparable<K>,V>{
             parent = heap.get(parent(i)).key;
             child = heap.get(i).key;
 
-            if(parent.compareTo(child) >= 0)
+            if(parent.compareTo(child) <= 0)
                 break;
             swap(i, parent(i));
             i = parent(i);
@@ -36,12 +35,12 @@ public class PQ<K extends Comparable<K>,V>{
             if(hasRight(i)){
                 int rightIndex = right(i);
                 right = heap.get(rightIndex).key;
-                if(left.compareTo(right) <= 0)
+                if(left.compareTo(right) >= 0)
                     smaller = rightIndex;
             }
 
 
-            if(heap.get(smaller).key.compareTo(heap.get(i).key) < 0)
+            if(heap.get(smaller).key.compareTo(heap.get(i).key) > 0)
                 break;
             swap(i, smaller);
             i = smaller;
